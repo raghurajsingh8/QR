@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inventory Form</title>
+  <title>Inventory Form with QR Scanner</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
   <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
   <style>
     body {
-      background-color: #f4f4f9;
+      background-color: green;
       color: #333;
       font-family: Arial, sans-serif;
     }
@@ -35,7 +35,7 @@
   <form id="inventoryForm">
     <div class="mb-3">
       <label for="serialNumberPurchase" class="form-label">Serial Number (Purchase)</label>
-      <input type="text" class="form-control" id="serialNumberPurchase" name="serialNumberPurchase" required>
+      <input type="text" class="form-control" id="serialNumberPurchase" name="serialNumberPurchase" readonly>
       <button type="button" class="btn btn-primary btn-scan" onclick="startScanner('serialNumberPurchase')">Scan QR for Purchase</button>
     </div>
 
@@ -51,7 +51,7 @@
 
     <div class="mb-3">
       <label for="serialNumberSale" class="form-label">Serial Number (Sale)</label>
-      <input type="text" class="form-control" id="serialNumberSale" name="serialNumberSale" required>
+      <input type="text" class="form-control" id="serialNumberSale" name="serialNumberSale" readonly>
       <button type="button" class="btn btn-primary btn-scan" onclick="startScanner('serialNumberSale')">Scan QR for Sale</button>
     </div>
 
@@ -93,8 +93,11 @@
 
 <script>
   function startScanner(targetField) {
-    document.getElementById("qr-reader").style.display = "block";
+    const qrReader = document.getElementById("qr-reader");
+    qrReader.style.display = "block"; // Show QR reader
+
     const html5QrCode = new Html5Qrcode("qr-reader");
+
     html5QrCode.start(
       { facingMode: "environment" },
       {
@@ -104,15 +107,11 @@
       qrCodeMessage => {
         document.getElementById(targetField).value = qrCodeMessage;
         html5QrCode.stop().then(() => {
-          document.getElementById("qr-reader").style.display = "none";
-        });
+          qrReader.style.display = "none"; // Hide QR reader once scanned
+        }).catch(err => console.error("QR Scanner stop error:", err));
       },
-      errorMessage => {
-        console.log("QR Code scanning failed: ", errorMessage);
-      }
-    ).catch(err => {
-      console.error("Unable to start scanning", err);
-    });
+      errorMessage => console.log("QR scanning error:", errorMessage)
+    ).catch(err => console.error("QR Scanner start error:", err));
   }
 </script>
 
