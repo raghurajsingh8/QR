@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory Form</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+  <style>
+    body {
+      background-color: #f4f4f9;
+      color: #333;
+      font-family: Arial, sans-serif;
+    }
+    .form-container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    .btn-scan {
+      margin-bottom: 10px;
+    }
+    #qr-reader {
+      width: 100%;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="form-container">
+  <h2 class="text-center">Inventory Form</h2>
+  <form id="inventoryForm">
+    <div class="mb-3">
+      <label for="serialNumberPurchase" class="form-label">Serial Number (Purchase)</label>
+      <input type="text" class="form-control" id="serialNumberPurchase" name="serialNumberPurchase" required>
+      <button type="button" class="btn btn-primary btn-scan" onclick="startScanner('serialNumberPurchase')">Scan QR for Purchase</button>
+    </div>
+
+    <div class="mb-3">
+      <label for="totalPurchaseQuantity" class="form-label">Total Purchase Quantity</label>
+      <input type="number" class="form-control" id="totalPurchaseQuantity" name="totalPurchaseQuantity" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="entryDateTime" class="form-label">Entry Time & Date</label>
+      <input type="datetime-local" class="form-control" id="entryDateTime" name="entryDateTime" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="serialNumberSale" class="form-label">Serial Number (Sale)</label>
+      <input type="text" class="form-control" id="serialNumberSale" name="serialNumberSale" required>
+      <button type="button" class="btn btn-primary btn-scan" onclick="startScanner('serialNumberSale')">Scan QR for Sale</button>
+    </div>
+
+    <div class="mb-3">
+      <label for="totalSaleQuantity" class="form-label">Total Sale Quantity</label>
+      <input type="number" class="form-control" id="totalSaleQuantity" name="totalSaleQuantity" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="outDateTime" class="form-label">Out Time & Date</label>
+      <input type="datetime-local" class="form-control" id="outDateTime" name="outDateTime" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="saleName" class="form-label">Sale Name</label>
+      <input type="text" class="form-control" id="saleName" name="saleName" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="scanBy" class="form-label">Scan By</label>
+      <input type="text" class="form-control" id="scanBy" name="scanBy" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="productName" class="form-label">Product Name</label>
+      <input type="text" class="form-control" id="productName" name="productName" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="productVersion" class="form-label">Product Version</label>
+      <input type="text" class="form-control" id="productVersion" name="productVersion" required>
+    </div>
+
+    <button type="submit" class="btn btn-success w-100">Submit</button>
+  </form>
+</div>
+
+<div id="qr-reader"></div>
+
+<script>
+  function startScanner(targetField) {
+    document.getElementById("qr-reader").style.display = "block";
+    const html5QrCode = new Html5Qrcode("qr-reader");
+    html5QrCode.start(
+      { facingMode: "environment" },
+      {
+        fps: 10,
+        qrbox: 250
+      },
+      qrCodeMessage => {
+        document.getElementById(targetField).value = qrCodeMessage;
+        html5QrCode.stop().then(() => {
+          document.getElementById("qr-reader").style.display = "none";
+        });
+      },
+      errorMessage => {
+        console.log("QR Code scanning failed: ", errorMessage);
+      }
+    ).catch(err => {
+      console.error("Unable to start scanning", err);
+    });
+  }
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
